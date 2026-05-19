@@ -1,0 +1,222 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Registration Form",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "placeholder": "Enter your Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Name",
+              "placeholder": "Enter your last Name"
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        32
+      ],
+      "id": "b77edd1f-6577-4536-bc98-a220803d2907",
+      "name": "On form submission",
+      "webhookId": "b868f095-e8ad-494c-961f-74a0ab8fbb90"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "165-LAqlcpmEc_kba8hTjy10-6h2ZAXG8_dbYj77MF6s",
+          "mode": "list",
+          "cachedResultName": "Registration Form",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/165-LAqlcpmEc_kba8hTjy10-6h2ZAXG8_dbYj77MF6s/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/165-LAqlcpmEc_kba8hTjy10-6h2ZAXG8_dbYj77MF6s/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "submittedAt",
+              "displayName": "submittedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "formMode",
+              "displayName": "formMode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        32
+      ],
+      "id": "7c188c3b-d2b7-4f3a-a60b-b53b5fed77b4",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "9ow2WJi5eWjJIYVu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "engineermalaikarajput@gmail.com",
+        "subject": "=New Form Submission from {{$json[\"First Name\"]}}",
+        "message": "=A new form submission has been received.\n\nName: {{$json[\"First Name\"]}}\n\nEmail: {{$json[\"Email\"]}}\n\nSubmitted automatically via n8n workflow.\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        32
+      ],
+      "id": "138e73ba-eb15-46a9-987c-35f3e51789da",
+      "name": "Send a message to owner",
+      "webhookId": "1a225934-856a-4745-bd9d-c8541f673f5a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BIeycE6fCNGm5FxZ",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Append row in sheet').item.json.Email }}",
+        "subject": "Thank You for Your Submission 🚀",
+        "message": "=Hi {{ $('Append row in sheet').item.json['First Name'] }},  Thank you for submitting the form.  We have successfully received your information and will contact you soon. \nBest regards, Engineer Malaika",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        32
+      ],
+      "id": "83cb1a43-1ba8-4d13-abbf-1beaef7839d9",
+      "name": "Send a message to user",
+      "webhookId": "64f2e270-9265-498e-bfd2-bdf5ed797357",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BIeycE6fCNGm5FxZ",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message to owner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message to owner": {
+      "main": [
+        [
+          {
+            "node": "Send a message to user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "56ec7905-1a1b-4bc8-8e8b-195c02cb986b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "45cfcca183e6c8929d591a5125441d6e9830c8b39ae14ceea377e54e6361f741"
+  },
+  "id": "ihVSrxYpXwXzattt",
+  "tags": []
+}
